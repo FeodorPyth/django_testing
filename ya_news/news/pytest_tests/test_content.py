@@ -27,7 +27,7 @@ def test_news_order(client, news_for_count):
 def test_comment_form_order(news, id_for_args, client, comment_for_count):
     url = reverse('news:detail', args=id_for_args)
     response = client.get(url)
-    all_comments = news.comment_set.all()
+    all_comments = response.context['news'].comment_set.all()
     assert all_comments[0].created < all_comments[1].created
 
 
