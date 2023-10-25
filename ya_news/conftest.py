@@ -3,9 +3,21 @@ from datetime import timedelta
 import pytest
 
 from django.conf import settings
+from django.urls import reverse
 from django.utils import timezone
 
 from news.models import Comment, News
+
+
+URL = {
+    'home': reverse('news:home'),
+    'detail': reverse('news:detail', args=(1,)),
+    'edit': reverse('news:edit', args=(1,)),
+    'delete': reverse('news:delete', args=(1,)),
+    'login': reverse('users:login'),
+    'logout': reverse('users:logout'),
+    'signup': reverse('users:signup'),
+}
 
 
 @pytest.fixture

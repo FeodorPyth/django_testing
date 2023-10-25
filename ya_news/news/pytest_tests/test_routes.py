@@ -1,25 +1,24 @@
-import pytest
-
 from http import HTTPStatus
 
-from django.urls import reverse
-
+import pytest
 from pytest_django.asserts import assertRedirects
+
+from conftest import URL
 
 
 @pytest.mark.parametrize(
-    'name, args',
+    'name',
     (
-        ('news:home', None),
-        ('news:detail', pytest.lazy_fixture('id_for_args')),
-        ('users:login', None),
-        ('users:logout', None),
-        ('users:signup', None)
+        (URL['home']),
+        (URL['detail']),
+        (URL['login']),
+        (URL['logout']),
+        (URL['signup'])
     )
 )
 @pytest.mark.django_db
-def test_pages_availability(client, name, args, news):
-    url = reverse(name, args=args)
+def test_pages_availability(client, name, news):
+    url = name
     response = client.get(url)
     assert response.status_code == HTTPStatus.OK
 
@@ -33,23 +32,23 @@ def test_pages_availability(client, name, args, news):
 )
 @pytest.mark.parametrize(
     'name',
-    ('news:delete', 'news:edit'),
+    (URL['delete'], URL['edit']),
 )
 def test_availability_for_comment_edit_and_delete(
     name, parametrized_client, expected_status, id_for_args_comment
 ):
-    url = reverse(name, args=id_for_args_comment)
+    url = name
     response = parametrized_client.get(url)
     assert response.status_code == expected_status
 
 
 @pytest.mark.parametrize(
     'name',
-    ('news:delete', 'news:edit')
+    (URL['delete'], URL['edit'])
 )
-def test_redirects(client, name, id_for_args_comment):
-    login_url = reverse('users:login')
-    url = reverse(name, args=id_for_args_comment)
+def test_redirects(client, name, comment):
+    login_url = URL['login']
+    url = name
     response = client.get(url)
     expected_url = f'{login_url}?next={url}'
     assertRedirects(response, expected_url)
