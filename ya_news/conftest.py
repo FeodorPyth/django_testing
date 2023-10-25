@@ -21,6 +21,41 @@ URL = {
 
 
 @pytest.fixture
+def home_url():
+    return reverse('news:home')
+
+
+@pytest.fixture
+def login_url():
+    return reverse('users:login')
+
+
+@pytest.fixture
+def logout_url():
+    return reverse('users:logout')
+
+
+@pytest.fixture
+def signup_url():
+    return reverse('users:signup')
+
+
+@pytest.fixture
+def detail_url(news):
+    return reverse('news:detail', args=(news.id,))
+
+
+@pytest.fixture
+def edit_url(news, comment):
+    return reverse('news:edit', args=(comment.id,))
+
+
+@pytest.fixture
+def delete_url(news, comment):
+    return reverse('news:delete', args=(comment.id,))
+
+
+@pytest.fixture
 def author(django_user_model):
     return django_user_model.objects.create(username='Автор Комментария')
 

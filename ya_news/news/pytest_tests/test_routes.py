@@ -3,17 +3,15 @@ from http import HTTPStatus
 import pytest
 from pytest_django.asserts import assertRedirects
 
-from conftest import URL
-
 
 @pytest.mark.parametrize(
     'name',
     (
-        (URL['home']),
-        (URL['detail']),
-        (URL['login']),
-        (URL['logout']),
-        (URL['signup'])
+        (pytest.lazy_fixture('home_url')),
+        (pytest.lazy_fixture('detail_url')),
+        (pytest.lazy_fixture('login_url')),
+        (pytest.lazy_fixture('logout_url')),
+        (pytest.lazy_fixture('signup_url'))
     )
 )
 @pytest.mark.django_db
@@ -32,8 +30,12 @@ def test_pages_availability(client, name, news):
 )
 @pytest.mark.parametrize(
     'name',
-    (URL['delete'], URL['edit']),
+    (
+        (pytest.lazy_fixture('delete_url')),
+        (pytest.lazy_fixture('edit_url'))
+    )
 )
+@pytest.mark.django_db
 def test_availability_for_comment_edit_and_delete(
     name, parametrized_client, expected_status, id_for_args_comment
 ):
@@ -44,10 +46,14 @@ def test_availability_for_comment_edit_and_delete(
 
 @pytest.mark.parametrize(
     'name',
-    (URL['delete'], URL['edit'])
+    (
+        (pytest.lazy_fixture('delete_url')),
+        (pytest.lazy_fixture('edit_url'))
+    )
 )
-def test_redirects(client, name, comment):
-    login_url = URL['login']
+@pytest.mark.django_db
+def test_redirects(client, name, comment, login_url):
+    login_url = login_url
     url = name
     response = client.get(url)
     expected_url = f'{login_url}?next={url}'

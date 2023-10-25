@@ -1,13 +1,12 @@
 import pytest
 from django.conf import settings
 
-from conftest import URL
 from news.forms import CommentForm
 
 
 @pytest.mark.django_db
-def test_news_count(client, news_for_count):
-    url = URL['home']
+def test_news_count(client, news_for_count, home_url):
+    url = home_url
     response = client.get(url)
     object_list = response.context['object_list']
     news_count = len(object_list)
@@ -15,8 +14,8 @@ def test_news_count(client, news_for_count):
 
 
 @pytest.mark.django_db
-def test_news_order(client, news_for_count):
-    url = URL['home']
+def test_news_order(client, news_for_count, home_url):
+    url = home_url
     response = client.get(url)
     object_list = response.context['object_list']
     all_dates = [news.date for news in object_list]
@@ -25,18 +24,16 @@ def test_news_order(client, news_for_count):
 
 
 @pytest.mark.django_db
-def test_comment_form_order(news, client, comment_for_count):
-    url = URL['detail']
+def test_comment_form_order(news, client, comment_for_count, detail_url):
+    url = detail_url
     response = client.get(url)
     all_comments = response.context['news'].comment_set.all()
     assert all_comments[0].created < all_comments[1].created
 
 
 @pytest.mark.django_db
-def test_access_for_form(
-    id_for_args, admin_client, client
-):
-    url = URL['detail']
+def test_access_for_form(id_for_args, admin_client, client, detail_url):
+    url = detail_url
     response = client.get(url)
     admin_response = admin_client.get(url)
     possible_result = 'form' not in response.context
